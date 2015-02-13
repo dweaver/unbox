@@ -2,5 +2,12 @@
   "name": "Unbox",
   "description": "An example website for IoT product registration",
   "repository": "https://github.com/dweaver/unbox",
-  "keywords": ["exosite", "iot", "provisioning", "registration"]
+  "keywords": ["exosite", "iot", "provisioning", "registration"],
+  "env": {
+      "VENDOR_TOKEN": {
+          "description": "Exosite subdomain vendor API token, from /admin/home",
+          "value": "",
+          "required": true
+      }
+  }
 }
