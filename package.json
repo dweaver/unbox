@@ -1,0 +1,27 @@
+{
+  "name": "unbox",
+  "version": "0.0.0",
+  "description": "Example unboxing/customer registration app for IoT products",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dweaver/unbox.git"
+  },
+  "keywords": [
+    "Exosite",
+    "IoT",
+    "One",
+    "Platform",
+    "Provisioning",
+    "sign",
+    "up"
+  ],
+  "author": "Dan Weaver <danweaver@exosite.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dweaver/unbox/issues"
+  }
+}

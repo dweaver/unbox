@@ -1,0 +1,28 @@
+{
+  "name": "unbox",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dweaver/unbox",
+  "authors": [
+    "Dan Weaver <danweaver@exosite.com>"
+  ],
+  "description": "Example unboxing/customer registration app for IoT products",
+  "main": "app.js",
+  "keywords": [
+    "Exosite",
+    "IoT",
+    "One",
+    "Platform",
+    "Provisioning",
+    "sign",
+    "up"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

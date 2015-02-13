@@ -1,0 +1,6 @@
+{
+  "name": "Unbox",
+  "description": "An example website for IoT product registration",
+  "repository": "https://github.com/dweaver/unbox",
+  "keywords": ["exosite", "iot", "provisioning", "registration"]
+}
