@@ -23,5 +23,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dweaver/unbox/issues"
+  },
+  "dependencies": {
+    "express": "~4.11.2"
   }
 }
