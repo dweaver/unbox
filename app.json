@@ -9,5 +9,6 @@
           "value": "",
           "required": true
       }
-  }
+  },
+  "logo": "https://raw.githubusercontent.com/dweaver/unbox/master/logo.png"
 }
