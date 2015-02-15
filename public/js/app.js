@@ -1,0 +1,90 @@
+(function() {
+  'use strict';
+  // app.js
+  angular.module('unboxApp', ['auth0', 'angular-storage', 'angular-jwt'])
+  .config(function(authProvider, $httpProvider, jwtInterceptorProvider) {
+    // We're annotating this function so that the `store` is injected correctly when this file is minified
+    jwtInterceptorProvider.tokenGetter = ['store', function(store) {
+      // Return the saved token
+      return store.get('token');
+    }];
+    $httpProvider.interceptors.push('jwtInterceptor');
+  })
+  .config(function (authProvider) {
+    authProvider.init(AUTH0_CONFIG);
+  })
+  .run(function(auth) {
+    // This hooks al auth events to check everything as soon as the app starts
+    auth.hookEvents();
+  })
+  .controller('unboxAppLoginController', function(auth, store, $location, $scope) {
+    $scope.login = function() {
+      auth.signin({}, function(profile, token) {
+        // Success callback
+        store.set('profile', profile);
+        store.set('token', token);
+        $location.path('/');
+      }, function() {
+        // Error callback
+      });
+    };
+    $scope.logout = function() {
+      auth.signout();
+      store.remove('profile');
+      store.remove('token');
+    };
+    $scope.auth = auth;
+  })
+  .controller('unboxAppUserController', function($http, $scope, auth) {
+    $scope.auth = auth;
+    $scope.products = [];
+    $http.get('/api/products')
+      .success(function(data, status, headers, config) {
+        console.log(data);
+        $scope.products = data.products; 
+      })
+      .error(function(data, status, headers, config) {
+        console.log('Error loading products ' + status);
+      });
+
+    $scope.addingProduct = false;
+    $scope.selectedModel = null;
+    $scope.models = null;
+    $scope.addProduct = function() {
+      $scope.addingProduct = true;
+      $http.get('/api/models')
+        .success(function(data, status, headers, config) {
+          console.log(data);
+          $scope.models = data.models; 
+          console.log(data.models);
+        })
+        .error(function(data, status, headers, config) {
+          console.log('Error loading models' + status);
+        });
+    };
+    $scope.selectProductToAdd = function(model) {
+      $scope.selectedModel = model;
+    };
+    $scope.serialNumberToAdd = '';
+    $scope.addProductBySerialNumber = function(model) {
+      console.log(model, $scope.serialNumberToAdd);
+      // TODO: post to /api/products
+    };
+  })
+  .run(function($rootScope, auth, store, jwtHelper, $location) {
+    // This events gets triggered on refresh or URL change
+    $rootScope.$on('$locationChangeStart', function() {
+      if (!auth.isAuthenticated) {
+        var token = store.get('token');
+        if (token) {
+          if (!jwtHelper.isTokenExpired(token)) {
+            auth.authenticate(store.get('profile'), token);
+          } else {
+            // Either show Login page or use the refresh token to get a new idToken
+            $location.path('/');
+          }
+        }
+      }
+    });
+  });
+})();
