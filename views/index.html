@@ -55,13 +55,16 @@
       </div>
       <div id="addSerialNumber" ng-show="selectedModel !== null">
         <div>
-          Enter serial number?
-          <input ng-model="serialNumberToAdd"></input>
-          <button ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
+          Enter serial number of the {{ selectedModel.friendly }}:
+          <div>
+            <input ng-model="serialNumberToAdd"></input>
+            <button ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
+            <span>{{ error }}</span>
+          </div>
         </div>
         <div>
           <div>Example SN: {{ selectedModel.exampleSN }}</div>
-          <div>SN picture: {{ selectedModel.pictureSN }}</div>
+          <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
         </div>
       </div>
     </div>

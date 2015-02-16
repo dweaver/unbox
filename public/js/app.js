@@ -59,7 +59,8 @@
           console.log(data.models);
         })
         .error(function(data, status, headers, config) {
-          console.log('Error loading models' + status);
+          var msg = 'Error loading models' + status;
+          console.log(msg);
         });
     };
     $scope.selectProductToAdd = function(model) {
@@ -68,7 +69,32 @@
     $scope.serialNumberToAdd = '';
     $scope.addProductBySerialNumber = function(model) {
       console.log(model, $scope.serialNumberToAdd);
-      // TODO: post to /api/products
+      var product = {
+        sn: $scope.serialNumberToAdd,
+        vendor: model.vendor,
+        model: model.name,
+        type: 'vendor'
+      };
+      console.log(JSON.stringify(product));
+      var req = {
+        method: 'POST',
+        url: '/api/products',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: product
+      };
+      $http(req)
+        .success(function(data, status, headers, config) {
+          $scope.addingProduct = false;
+          // TODO: refresh product list
+          console.log(data);
+        })
+        .error(function(data, status, headers, config) {
+          var msg = 'Error creating product (HTTP ' + status + ') ' + data;
+          $scope.error = msg;
+          console.log(msg)
+        });
     };
   })
   .run(function($rootScope, auth, store, jwtHelper, $location) {

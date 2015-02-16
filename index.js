@@ -1,14 +1,16 @@
+/*
+ * Unbox server
+ */
 'use strict';
-var express = require('express');
-var _ = require('underscore');
-var cons = require('consolidate');
-var cookieParser = require('cookie-parser');
-var expressSession = require('express-session');
+var express         = require('express');
+var _               = require('underscore');
+var cons            = require('consolidate');
+var bodyParser      = require('body-parser');
+var portals         = require('./portals');
+var jwt             = require('express-jwt');
 
 var app = express();
-var portals = require('./portals');
-
-var jwt = require('express-jwt');
+app.use(bodyParser.json());
 
 var jwtCheck = jwt({
   secret: new Buffer(process.env.AUTH0_CLIENT_SECRET, 'base64'),
@@ -25,6 +27,7 @@ var admin = {
 
 var host = process.env.PORTALS_HOST;
 var secret = process.env.SESSION_SECRET;
+var portalId = process.env.PORTAL_ID;
 
 // use underscore for templates
 app.engine('html', cons.underscore);
@@ -45,13 +48,26 @@ app.get('/api/products', function(req, res) {
   res.send(JSON.stringify({products: [{model: "dishwasher", sn: "abc-123"}]})).end();
 });
 
+function handleError(err, res) {
+  console.log(err);
+  res.status(err).end();
+  return;
+}
+
+app.post('/api/products', function(req, res) {
+  var device = req.body;
+  console.log('deviceCreate', portalId, device, host, admin);
+  portals.deviceCreate(host, admin, portalId, device, function(err, createdDevice) {
+    if (err) { return handleError(err, res); }
+    console.log('TODO: create product and save device RID')
+    res.send(JSON.stringify(createdDevice))
+  });
+});
+
 app.get('/api/models', function(req, res) {
   portals.modelsList(host, admin, function(err, models) {
-    if (err) {
-      console.log(err);
-      res.status(400).end();
-      return;
-    }
+    if (err) { return handleError(err, res); }
+    // get only published models
     var publishedModels = _.filter(models, function(model) {
       return model[':published'] === true;
     });

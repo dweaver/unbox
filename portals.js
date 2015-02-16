@@ -4,7 +4,7 @@
 'use strict';
 
 var request = require('request');
-var _ = require('underscore');
+var _       = require('underscore');
 
 var OPTIONS = {
 };
@@ -17,6 +17,26 @@ exports.setOptions = function(options) {
 };
 
 /**
+ * Detect an error from Portals API
+ */
+function hasError(err, response) {
+  return err || response.statusCode > 300;
+}
+
+/**
+ * Handle errors from Portals API
+ */
+function handleError(err, response, body, callback) {
+  if (err) {
+    return callback(err);
+  }
+  if (response.statusCode >= 300) {
+    var e = new Error(response.statusCode + ' ' + body);
+    return callback(e);
+  }
+}
+
+/**
  * List models for a vendor
  */
 exports.modelsList = function(host, auth, callback) {
@@ -25,13 +45,28 @@ exports.modelsList = function(host, auth, callback) {
     auth: auth
   };
   request(options, function (err, response, body) {
-    if (err) {
-      return callback(err);
-    }
-    if (response.statusCode >= 300) {
-      return callback(response.statusCode);
+    if (hasError(err, response)) {
+      return handleError(err, response, body, callback);
     }
     var models = JSON.parse(body);
     callback(null, models);
   });
 };
+
+/**
+ * Create a device based on a model and serial number.
+ */
+exports.deviceCreate = function(host, auth, portalId, deviceObj, callback) {
+  var options = {
+    url: 'https://' + host + '/api/portals/v1/portals/' + portalId + '/devices',
+    auth: auth,
+    body: JSON.stringify(deviceObj)
+  };
+  request.post(options, function (err, response, body) {
+    if (hasError(err, response)) {
+      return handleError(err, response, body, callback);
+    }
+    var device = JSON.parse(body);
+    callback(null, device);
+  });
+}
