@@ -39,15 +39,18 @@
   })
   .controller('unboxAppUserController', function($http, $scope, auth) {
     $scope.auth = auth;
-    $scope.products = [];
-    $http.get('/api/products')
-      .success(function(data, status, headers, config) {
-        console.log(data);
-        $scope.products = data.products; 
-      })
-      .error(function(data, status, headers, config) {
-        console.log('Error loading products ' + status);
-      });
+    $scope.products = {products: []};
+    function syncProducts() {
+      $http.get('/api/products')
+          .success(function (data, status, headers, config) {
+            console.log(data);
+            $scope.products.products = data.products;
+          })
+          .error(function (data, status, headers, config) {
+            console.log('Error loading products ' + status);
+          });
+    }
+    syncProducts();
 
     $scope.addingProduct = false;
     $scope.selectedModel = null;
@@ -87,7 +90,7 @@
       $http(req)
         .success(function(data, status, headers, config) {
           $scope.addingProduct = false;
-          // TODO: refresh product list
+          syncProducts();
           console.log(data);
         })
         .error(function(data, status, headers, config) {

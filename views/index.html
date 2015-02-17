@@ -37,7 +37,7 @@
     <h3>Your products</h3>
     <div>
       <ul>
-        <li ng-repeat="product in products">{{ product.model }} {{ product.sn }}</li>
+        <li ng-repeat="product in products.products">{{ product.model }} {{ product.sn }}</li>
       </ul>
       <button ng-click="addProduct()">
         Add Product
