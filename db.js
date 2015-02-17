@@ -10,15 +10,15 @@ exports.setup = function() {
   var conStringPri = process.env.DATABASE_URL + '/postgres';
   var conStringPost = process.env.DATABASE_URL + '/' + DB_NAME;
 
-  pg.connect(conStringPri, function (err, client, done) {
+  pg.connect(conStringPri, function (err, pgClient, done) {
     if (err) {
       console.log('Error while connecting: ' + err);
     }
-    client1.query('CREATE DATABASE ' + DB_NAME, function (err) {
+    pgClient.query('CREATE DATABASE ' + DB_NAME, function (err) {
       if (err) {
         console.log('ignoring the error: ', err); // ignore if the db is there
       }
-      client.end();
+      pgClient.end();
 
       // now that we know the database existes, create table(s)
       pg.connect(conStringPost, function (err, clientOrg, done) {
