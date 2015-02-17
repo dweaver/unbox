@@ -21,7 +21,7 @@
           "required": true
       },
       "PORTAL_ID": {
-        "description": "Exosite portal ID for users' devices, from /admin/portallist",
+        "description": "Exosite portal ID where the app will store devices, from /admin/portallist",
         "value": "",
         "required": true
       },

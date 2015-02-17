@@ -6,6 +6,8 @@ This is in development and not complete yet.
 
 ## Setup
 
+Here's how to clone the project and run locally.
+
 ```
 $ git clone git@github.com:dweaver/unbox.git
 $ cd unbox
@@ -15,6 +17,8 @@ $ heroku addons:add auth0 --type=nodejs
 $ heroku addons:add heroku-postgresql
 $ foreman start
 ```
+
+Or, press this button to do all this automatically:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
