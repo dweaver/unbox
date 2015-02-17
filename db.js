@@ -1,51 +1,37 @@
+/**
+ * Postgres Database access module
+ */
 var pg = require('pg');
 
-var DB_NAME = 'unbox';
 var client = null;
+var conString = process.env.DATABASE_URL;
+
 
 /**
- * Initialize database by creating it and creating tables.
- */
-exports.setup = function() {
-  var conStringPri = process.env.DATABASE_URL + '/postgres';
-  var conStringPost = process.env.DATABASE_URL + '/' + DB_NAME;
-
-  pg.connect(conStringPri, function (err, pgClient, done) {
-    if (err) {
-      console.log('Error while connecting: ' + err);
-    }
-    pgClient.query('CREATE DATABASE ' + DB_NAME, function (err) {
-      if (err) {
-        console.log('ignoring the error: ', err); // ignore if the db is there
-      }
-      pgClient.end();
-
-      // now that we know the database existes, create table(s)
-      pg.connect(conStringPost, function (err, clientOrg, done) {
-        // create the table
-        clientOrg.query('CREATE TABLE IF NOT EXISTS Device ' +
-        '(UserID VARCHAR(255), DeviceRID VARCHAR(40), CreatedAt timestamp);', function (err) {
-          if (err) {
-            console.log('Error creating tables: ', err);
-          }
-          clientOrg.end();
-        });
-      });
-    });
-  });
-}
-
-/**
- * Connect to database. Do this before calling
+ * Connect to database. Do this before calling functions below this one
  */
 exports.connect = function(callback) {
-  var conStringPost = process.env.DATABASE_URL + '/' + DB_NAME;
-  pg.connect(conStringPost, function (err, newClient, done) {
+  pg.connect(conString, function (err, newClient, done) {
     if (err) {
       return callback(err);
     }
     client = newClient;
     callback(null, client);
+  });
+}
+
+/**
+ * Initialize database by creating it and creating tables.
+ */
+exports.setup = function(callback) {
+  // create the table
+  client.query('CREATE TABLE IF NOT EXISTS Device ' +
+    '(UserID VARCHAR(255), DeviceRID VARCHAR(40), CreatedAt timestamp);', function (err) {
+    if (err) {
+      console.log('Error creating tables: ', err);
+      return callback(err);
+    }
+    callback(null);
   });
 }
 
