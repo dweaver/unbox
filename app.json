@@ -5,6 +5,11 @@
   "keywords": ["exosite", "iot", "provisioning", "registration"],
   "addons": ["heroku-postgresql:hobby-dev", "auth0:dev"],
   "env": {
+      "PORTALS_HOST": {
+        "description": "Portals host, e.g. mydomain.exosite.com",
+        "value": "",
+        "required": true
+      },
       "PORTALS_ADMIN_EMAIL": {
           "description": "Exosite subdomain administrator email address",
           "value": "",
