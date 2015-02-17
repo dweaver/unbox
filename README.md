@@ -10,9 +10,13 @@ This is in development and not complete yet.
 $ git clone git@github.com:dweaver/unbox.git
 $ cd unbox
 $ npm install
-$ # create .env file with VENDOR_TOKEN=<your vendor token>
+$ # create .env file with keys specified in app.json
+$ heroku addons:add auth0 --type=nodejs
+$ heroku addons:add heroku-postgresql
 $ foreman start
 ```
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## Authorization
 

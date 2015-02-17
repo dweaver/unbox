@@ -5,10 +5,25 @@
   "keywords": ["exosite", "iot", "provisioning", "registration"],
   "addons": ["heroku-postgresql:hobby-dev", "auth0:dev"],
   "env": {
-      "VENDOR_TOKEN": {
-          "description": "Exosite subdomain vendor API token, from /admin/home",
+      "PORTALS_ADMIN_EMAIL": {
+          "description": "Exosite subdomain administrator email address",
           "value": "",
           "required": true
+      },
+      "PORTALS_ADMIN_PASSWORD": {
+          "description": "Exosite subdomain administrator password",
+          "value": "",
+          "required": true
+      },
+      "PORTAL_ID": {
+        "description": "Exosite portal ID for users' devices, from /admin/portallist",
+        "value": "",
+        "required": true
+      },
+      "SESSION_SECRET": {
+        "description": "Session secret for login. Should be hard to guess and unique for this Unbox site.",
+        "generator": "secret",
+        "required": true
       }
   },
   "scripts": {
