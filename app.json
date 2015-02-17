@@ -3,12 +3,16 @@
   "description": "An website template for Exosite product registration",
   "repository": "https://github.com/dweaver/unbox",
   "keywords": ["exosite", "iot", "provisioning", "registration"],
+  "addons": ["heroku-postgresql:hobby-dev", "auth0:dev"],
   "env": {
       "VENDOR_TOKEN": {
           "description": "Exosite subdomain vendor API token, from /admin/home",
           "value": "",
           "required": true
       }
+  },
+  "scripts": {
+    "postdeploy": "node dbsetup.js"
   },
   "logo": "https://raw.githubusercontent.com/dweaver/unbox/master/logo.png"
 }

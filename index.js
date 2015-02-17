@@ -6,8 +6,16 @@ var express         = require('express');
 var _               = require('underscore');
 var cons            = require('consolidate');
 var bodyParser      = require('body-parser');
-var portals         = require('./portals');
 var jwt             = require('express-jwt');
+
+var portals         = require('./portals');
+var db              = require('./db')
+
+db.connect(function(err) {
+  if (err) {
+    console.log('Error from postgres connection db.connect ' + err);
+  }
+});
 
 var app = express();
 app.use(bodyParser.json());
@@ -43,24 +51,36 @@ app.get('/', function (req, res) {
   });
 });
 
-app.use('/api/products', jwtCheck);
-app.get('/api/products', function(req, res) {
-  res.send(JSON.stringify({products: [{model: "dishwasher", sn: "abc-123"}]})).end();
-});
-
 function handleError(err, res) {
   console.log(err);
   res.status(err).end();
   return;
 }
 
+app.use('/api/products', jwtCheck);
+app.get('/api/products', function(req, res) {
+  db.getDevices(req.user.sub, function(err, devices) {
+    if (err) {
+      handleError(err, res);
+    }
+    var deviceRIDs = _.map(devices, function(device) {
+      //return {rid: device.DeviceRID, model: 'TODO: Model', sn: 'TODO: sn'};
+      return device.devicerid;
+    });
+    portals.devicesGet(host, admin, deviceRIDs, function(err, devices) {
+      res.send(JSON.stringify({products: devices})).end();
+    });
+  });
+});
+
 app.post('/api/products', function(req, res) {
   var device = req.body;
-  console.log('deviceCreate', portalId, device, host, admin);
   portals.deviceCreate(host, admin, portalId, device, function(err, createdDevice) {
     if (err) { return handleError(err, res); }
-    console.log('TODO: create product and save device RID')
-    res.send(JSON.stringify(createdDevice))
+    db.putDevice(req.user.sub, createdDevice, function(err) {
+      if (err) { return handleError(err, res); }
+      res.send(JSON.stringify(createdDevice))
+    });
   });
 });
 

@@ -69,4 +69,22 @@ exports.deviceCreate = function(host, auth, portalId, deviceObj, callback) {
     var device = JSON.parse(body);
     callback(null, device);
   });
-}
+};
+
+/**
+ * Get devices for a user.
+ */
+exports.devicesGet = function(host, auth, deviceRIDs, callback) {
+  var url = 'https://' + host + '/api/portals/v1/users/_this/devices/[' + deviceRIDs.join(',') + ']';
+  var options = {
+    url: url,
+    auth: auth
+  };
+  request.get(options, function (err, response, body) {
+    if (hasError(err, response)) {
+      return handleError(err, response, body, callback);
+    }
+    var devices = JSON.parse(body);
+    callback(null, devices);
+  });
+};

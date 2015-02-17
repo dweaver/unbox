@@ -14,7 +14,7 @@
     authProvider.init(AUTH0_CONFIG);
   })
   .run(function(auth) {
-    // This hooks al auth events to check everything as soon as the app starts
+    // This hooks all auth events to check everything as soon as the app starts
     auth.hookEvents();
   })
   .controller('unboxAppLoginController', function(auth, store, $location, $scope) {
@@ -24,8 +24,10 @@
         store.set('profile', profile);
         store.set('token', token);
         $location.path('/');
+
       }, function() {
         // Error callback
+        console.log('Error from auth.signin')
       });
     };
     $scope.logout = function() {
@@ -54,9 +56,7 @@
       $scope.addingProduct = true;
       $http.get('/api/models')
         .success(function(data, status, headers, config) {
-          console.log(data);
-          $scope.models = data.models; 
-          console.log(data.models);
+          $scope.models = data.models;
         })
         .error(function(data, status, headers, config) {
           var msg = 'Error loading models' + status;
