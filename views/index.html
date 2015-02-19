@@ -17,12 +17,18 @@
       clientID: '<%= AUTH0_CLIENT_ID %>'
     }
   </script>
-  <script src="/js/app.js"></script>
+
+  <link href="http://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet" type="text/css">
+  <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+
+  <link href="/css/app.css" rel="stylesheet" type="text/css">
 
   <!-- Setting the right viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body ng-app="unboxApp">
+  <h2>ACME</h2>
   <div ng-controller="unboxAppLoginController">
     <div ng-show="auth.isAuthenticated">
       <span>Welcome back, {{auth.profile.nickname}}!</span>
@@ -69,5 +75,8 @@
       </div>
     </div>
   </div>
+  <script src="/js/app.js"></script>
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

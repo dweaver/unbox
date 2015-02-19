@@ -18,6 +18,7 @@
   ],
   "license": "MIT",
   "private": true,
+  "directory": "public/bower_components",
   "ignore": [
     "**/.*",
     "node_modules",
