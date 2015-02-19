@@ -47,7 +47,8 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function (req, res) {
   res.render('index.html', {
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID
+    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
+    host: process.env.PORTALS_HOST
   });
 });
 
@@ -68,7 +69,13 @@ app.get('/api/products', function(req, res) {
       return device.devicerid;
     });
     portals.devicesGet(host, admin, deviceRIDs, function(err, devices) {
-      res.send(JSON.stringify({products: devices})).end();
+      // This excludes devices that are in the Unbox app
+      // database but Portals can't find them (e.g. because
+      // they're deleted)
+      var existentDevices = _.filter(devices, function(device) {
+        return device.info !== false;
+      });
+      res.send(JSON.stringify({products: existentDevices})).end();
     });
   });
 });

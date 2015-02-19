@@ -1,3 +1,11 @@
-h2 {
+.navbar-brand {
     font-family: 'Patua One', cursive;
+}
+
+.main {
+    padding-top: 50px;
+}
+
+.unbox-login {
+    padding-right: 10px;
 }

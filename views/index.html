@@ -28,51 +28,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body ng-app="unboxApp">
-  <h2>ACME</h2>
-  <div ng-controller="unboxAppLoginController">
-    <div ng-show="auth.isAuthenticated">
-      <span>Welcome back, {{auth.profile.nickname}}!</span>
-      <input type="submit" ng-show="auth.isAuthenticated === true" ng-click="logout()" value="Log out" />
-    </div>
-    <div ng-show="!auth.isAuthenticated">
-      <span>Hello!</span>
-      <input type="submit"  ng-click="login()" value="Log in" />
-    </div>
-  </div>
-  <div ng-controller="unboxAppUserController" ng-show="auth.isAuthenticated">
-    <h3>Your products</h3>
-    <div>
-      <ul>
-        <li ng-repeat="product in products.products">{{ product.model }} {{ product.sn }}</li>
-      </ul>
-      <button ng-click="addProduct()">
-        Add Product
-      </button>
-    </div>
-    <div id="addProduct" ng-show="addingProduct">
-      <div ng-show="models === null">
-        Loading models...
+  <nav ng-controller="unboxAppLoginController" class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Unbox App</a>
       </div>
-      <div ng-hide="models === null">
-        Select a product model to add:
-        <ul>
-          <li ng-repeat="model in models">{{ model.friendly }} <button ng-click="selectProductToAdd(model)">Add</button></li>
-        </ul>
-      </div>
-      <div id="addSerialNumber" ng-show="selectedModel !== null">
-        <div>
-          Enter serial number of the {{ selectedModel.friendly }}:
-          <div>
-            <input ng-model="serialNumberToAdd"></input>
-            <button ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
-            <span>{{ error }}</span>
+      <div class="navbar-collapse collapse">
+        <div class="nav navbar-nav navbar-right unbox-login">
+          <div ng-show="auth.isAuthenticated">
+            <span class="">{{auth.profile.nickname}}</span>
+            <input class="btn btn-sm navbar-btn" type="submit" ng-show="auth.isAuthenticated === true" ng-click="logout()" value="Log out" />
+          </div>
+          <div ng-show="!auth.isAuthenticated">
+            <input class="btn btn-sm navbar-btn" type="submit"  ng-click="login()" value="Log in" />
           </div>
         </div>
-        <div>
-          <div>Example SN: {{ selectedModel.exampleSN }}</div>
-          <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
+      <div ng-controller="unboxAppUserController" ng-show="auth.isAuthenticated">
+        <h2 class="page-header">Your products</h2>
+        <div class="row placeholders">
+          <div class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
+            <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
+            <h4>{{ product.model }}</h4>
+            <span class="text-muted">{{ product.sn }}</span>
+          </div>
+          <button class="btn btn-primary" ng-click="addProduct()">
+            Add Product
+          </button>
+        </div>
+        <div id="addProduct" ng-show="addingProduct">
+          <div ng-show="models === null">
+            Loading models...
+          </div>
+          <div ng-hide="models === null">
+            Select a product model to add:
+            <ul>
+              <li ng-repeat="model in models">{{ model.friendly }} <button class="btn" ng-click="selectProductToAdd(model)">Add</button></li>
+            </ul>
+          </div>
+          <div id="addSerialNumber" ng-show="selectedModel !== null">
+            <div>
+              Enter serial number of the {{ selectedModel.friendly }}:
+              <div>
+                <input ng-model="serialNumberToAdd"></input>
+                <button class="btn" ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
+                <span>{{ error }}</span>
+              </div>
+            </div>
+            <div>
+              <div>Example SN: {{ selectedModel.exampleSN }}</div>
+              <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
   <script src="/js/app.js"></script>
