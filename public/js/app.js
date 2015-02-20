@@ -44,6 +44,7 @@
     $scope.products = null;
 
     function syncProducts() {
+      // load models and products in parallel
       $q.all([
           $http.get('/api/models'),
           $http.get('/api/products')
@@ -51,23 +52,20 @@
         var modelsResponse = responses[0];
         var productsResponse = responses[1];
 
-        if (modelsResponse.status !== 200 || productsResponse.status !== 200) {
-          $scope.errorMessage = "Error getting models and products.";
-          console.log('Error. models status: ' + modelsResponse.status +
-          ' products status: ' + productsResponse.status);
-          console.log(responses);
-        } else {
-          $scope.models = {models: modelsResponse.data.models};
+        $scope.models = {models: modelsResponse.data.models};
 
-          // set model on each product
-          _.each(productsResponse.data.products, function(prod) {
-            prod.modelObj = _.find($scope.models.models, function(model) {
-              return model.name === prod.model;
-            })
-          });
+        // set model on each product
+        _.each(productsResponse.data.products, function(prod) {
+          prod.modelObj = _.find($scope.models.models, function(model) {
+            return model.name === prod.model;
+          })
+        });
 
-          $scope.products = {products: productsResponse.data.products};
-        }
+        $scope.products = {products: productsResponse.data.products};
+      }, function errorCallback() {
+        var msg = 'Error loading models and products. ';
+        console.log(msg)
+        $scope.errorMessage = msg;
       });
     }
     syncProducts();
