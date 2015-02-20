@@ -37,34 +37,45 @@
     };
     $scope.auth = auth;
   })
-  .controller('unboxAppUserController', function($http, $scope, auth) {
+  .controller('unboxAppUserController', function($http, $scope, $q, auth) {
     $scope.auth = auth;
+    $scope.errorMessage = '';
+    $scope.models = null;
     $scope.products = {products: []};
+
     function syncProducts() {
-      $http.get('/api/products')
-          .success(function (data, status, headers, config) {
-            console.log(data);
-            $scope.products.products = data.products;
-          })
-          .error(function (data, status, headers, config) {
-            console.log('Error loading products ' + status);
+      $q.all([
+          $http.get('/api/models'),
+          $http.get('/api/products')
+      ]).then(function(responses) {
+        var modelsResponse = responses[0];
+        var productsResponse = responses[1];
+
+        if (modelsResponse.status !== 200 || productsResponse.status !== 200) {
+          $scope.errorMessage = "Error getting models and products.";
+          console.log('Error. models status: ' + modelsResponse.status +
+          ' products status: ' + productsResponse.status);
+          console.log(responses);
+        } else {
+          $scope.models = {models: modelsResponse.data.models};
+
+          // set model on each product
+          _.each(productsResponse.data.products, function(prod) {
+            prod.modelObj = _.find($scope.models.models, function(model) {
+              return model.name === prod.model;
+            })
           });
+
+          $scope.products.products = productsResponse.data.products;
+        }
+      });
     }
     syncProducts();
 
     $scope.addingProduct = false;
     $scope.selectedModel = null;
-    $scope.models = null;
     $scope.addProduct = function() {
       $scope.addingProduct = true;
-      $http.get('/api/models')
-        .success(function(data, status, headers, config) {
-          $scope.models = data.models;
-        })
-        .error(function(data, status, headers, config) {
-          var msg = 'Error loading models' + status;
-          console.log(msg);
-        });
     };
     $scope.selectProductToAdd = function(model) {
       $scope.selectedModel = model;
@@ -91,6 +102,7 @@
         .success(function(data, status, headers, config) {
           $scope.addingProduct = false;
           syncProducts();
+          $('#addProductModal').modal('hide');
           console.log(data);
         })
         .error(function(data, status, headers, config) {

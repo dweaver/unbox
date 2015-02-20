@@ -56,48 +56,72 @@
     <div class="row">
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
       <div ng-controller="unboxAppUserController" ng-show="auth.isAuthenticated">
+        <div class="alert alert-warning" role="alert" ng-show="errorMessage.length > 0">
+          {{ errorMessage }}
+        </div>
         <h2 class="page-header">Your products</h2>
         <div class="row placeholders">
           <div class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
-            <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
-            <h4>{{ product.model }}</h4>
-            <span class="text-muted">{{ product.sn }}</span>
+            <img data-src="holder.js/150x150/auto/vine" class="img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
+            <h4>{{ product.modelObj.friendly }}</h4>
+            <span class="text-muted">SN: {{ product.sn }}</span>
           </div>
-          <button class="btn btn-primary" ng-click="addProduct()">
+
+          <button class="btn btn-primary" ng-click="addProduct()"  data-toggle="modal" data-target="#addProductModal">
             Add Product
           </button>
         </div>
-        <div id="addProduct" ng-show="addingProduct">
-          <div ng-show="models === null">
-            Loading models...
-          </div>
-          <div ng-hide="models === null">
-            Select a product model to add:
-            <ul>
-              <li ng-repeat="model in models">{{ model.friendly }} <button class="btn" ng-click="selectProductToAdd(model)">Add</button></li>
-            </ul>
-          </div>
-          <div id="addSerialNumber" ng-show="selectedModel !== null">
-            <div>
-              Enter serial number of the {{ selectedModel.friendly }}:
-              <div>
-                <input ng-model="serialNumberToAdd"></input>
-                <button class="btn" ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
-                <span>{{ error }}</span>
+          <!-- Modal -->
+          <div class="modal" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Add Product</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="addProduct" ng-show="addingProduct">
+                      <div ng-show="models === null">
+                        Loading models...
+                      </div>
+                      <div ng-hide="models === null">
+                        Select a product model to add:
+                        <ul>
+                          <li ng-repeat="model in models.models">{{ model.friendly }} <button class="btn" ng-click="selectProductToAdd(model)">Add</button></li>
+                        </ul>
+                      </div>
+                      <div id="addSerialNumber" ng-show="selectedModel !== null">
+                        <div>
+                          Enter serial number of the {{ selectedModel.friendly }}:
+                          <div>
+                            <input ng-model="serialNumberToAdd"></input>
+                            <button class="btn" ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
+                            <span>{{ error }}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div>Example SN: {{ selectedModel.exampleSN }}</div>
+                          <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
               </div>
             </div>
-            <div>
-              <div>Example SN: {{ selectedModel.exampleSN }}</div>
-              <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
-            </div>
           </div>
-        </div>
       </div>
     </div>
     </div>
   </div>
-  <script src="/js/app.js"></script>
+
+  <script src="/bower_components/lodash/lodash.min.js"></script>
   <script src="/bower_components/jquery/dist/jquery.min.js"></script>
   <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="/js/app.js"></script>
+
 </body>
 </html>
