@@ -61,12 +61,14 @@
         </div>
         <h2 class="page-header">Your products</h2>
         <div class="row placeholders">
-          <div class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
+          <div ng-show="products !== null" class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
             <img data-src="holder.js/150x150/auto/vine" class="img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
             <h4>{{ product.modelObj.friendly }}</h4>
             <span class="text-muted">SN: {{ product.sn }}</span>
           </div>
-
+          <div ng-show="products === null">
+            Something's in progress...
+          </div>
           <button class="btn btn-primary" ng-click="addProduct()"  data-toggle="modal" data-target="#addProductModal">
             Add Product
           </button>

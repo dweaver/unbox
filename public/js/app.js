@@ -41,7 +41,7 @@
     $scope.auth = auth;
     $scope.errorMessage = '';
     $scope.models = null;
-    $scope.products = {products: []};
+    $scope.products = null;
 
     function syncProducts() {
       $q.all([
@@ -66,7 +66,7 @@
             })
           });
 
-          $scope.products.products = productsResponse.data.products;
+          $scope.products = {products: productsResponse.data.products};
         }
       });
     }
