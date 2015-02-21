@@ -1,8 +1,8 @@
 # Unbox
 
-Unbox is an example of a customer registration site for [Exosite](https://exosite.com)-connected products.
+Unbox is an example of a customer registration site for [Exosite](https://exosite.com)-connected products. It's a seed project intended to be a starting point for a product website.
 
-This is in development and not complete yet.
+This is in development and an experiment rather than an official/supported Exosite product. That said, please do let me know what you think!
 
 ## Setup
 

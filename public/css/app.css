@@ -1,5 +1,5 @@
-.navbar-brand {
-    font-family: 'Patua One', cursive;
+body {
+    font-family: 'Raleway', sans-serif;
 }
 
 .main {
@@ -9,3 +9,4 @@
 .unbox-login {
     padding-right: 10px;
 }
+
