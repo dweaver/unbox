@@ -49,6 +49,25 @@
         });
 
         return deferred.promise;
+      },
+      addProduct: function(product) {
+        var deferred = $q.defer();
+        var req = {
+          method: 'POST',
+          url: '/api/products',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: product
+        };
+        $http(req)
+          .success(function(data, status, headers, config) {
+            deferred.resolve();
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject({status: status, message: data});
+          });
+        return deferred.promise;
       }
     }
   })
@@ -72,7 +91,7 @@
     };
     $scope.auth = auth;
   })
-  .controller('unboxAppUserController', function(UnboxService, $scope, $q, auth, $modal, $log, $http) {
+  .controller('unboxAppUserController', function(UnboxService, $scope, $q, auth, $modal, $log) {
     $scope.auth = auth;
     $scope.errorMessage = '';
     $scope.models = null;
@@ -112,28 +131,19 @@
           model: result.selectedModel.name,
           type: 'vendor'
         };
-        var req = {
-          method: 'POST',
-          url: '/api/products',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          data: product
-        };
-        $http(req)
-          .success(function(data, status, headers, config) {
-            $scope.syncProducts();
-          })
-          .error(function(data, status, headers, config) {
-            var msg = 'Error creating product (HTTP ' + status + ') ' + data;
-            $scope.error = msg;
-            console.log(msg)
-          });
+        UnboxService.addProduct(product)
+            .then(function() {
+              $scope.syncProducts();
+            },
+            function(err) {
+              var msg = 'Error creating product (HTTP ' + err.status + ') ' + err.message;
+              $scope.error = msg;
+              console.log(msg)
+            });
       }, function () {
         $log.info('Modal dismissed at: ' + new Date());
       });
     };
-
   })
   .controller('DemoModalCtrl', function ($scope, $modal, $log) {
     $scope.items = ['item1', 'item2', 'item3'];
