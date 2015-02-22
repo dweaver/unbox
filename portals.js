@@ -23,6 +23,17 @@ function hasError(err, response) {
   return err || response.statusCode > 300;
 }
 
+function PortalsError(status, message) {
+  this.name = 'PortalsError';
+  this.status = status;
+  this.message = (message || '');
+  var self = this;
+  this.toString = function() {
+    return self.name + ' ' + self.status + ' ' + self.message;
+  }
+}
+PortalsError.prototype = new Error();
+
 /**
  * Handle errors from Portals API
  */
@@ -31,7 +42,7 @@ function handleError(err, response, body, callback) {
     return callback(err);
   }
   if (response.statusCode >= 300) {
-    var e = new Error(response.statusCode + ' ' + body);
+    var e = new PortalsError(response.statusCode, body);
     return callback(e);
   }
 }
@@ -76,11 +87,33 @@ exports.deviceCreate = function(host, auth, portalId, deviceObj, callback) {
  */
 exports.devicesGet = function(host, auth, deviceRIDs, callback) {
   var url = 'https://' + host + '/api/portals/v1/users/_this/devices/[' + deviceRIDs.join(',') + ']';
-  var options = {
+  var requestOptions = {
     url: url,
     auth: auth
   };
-  request.get(options, function (err, response, body) {
+  request.get(requestOptions, function (err, response, body) {
+    if (hasError(err, response)) {
+      return handleError(err, response, body, callback);
+    }
+    try {
+      var devices = JSON.parse(body);
+      callback(null, devices);
+    } catch(e) {
+      callback(e + ' while parsing response from ' + url);
+    }
+  });
+};
+
+/**
+ * Get data sources for a Portals user.
+ */
+exports.dataSourcesGet = function(host, auth, dataSourceRIDs, callback) {
+  var url = 'https://' + host + '/api/portals/v1/users/_this/data-sources/[' + dataSourceRIDs.join(',') + ']';
+  var requestOptions = {
+    url: url,
+    auth: auth
+  };
+  request.get(requestOptions, function (err, response, body) {
     if (hasError(err, response)) {
       return handleError(err, response, body, callback);
     }

@@ -62,67 +62,58 @@
         <h2 class="page-header">Your products</h2>
         <div class="row placeholders">
           <div ng-show="products !== null" class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
-            <img data-src="js/holder.js/150x150/auto/vine" class="img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
+            <img data-src="js/holder.js/150x150/auto/vine" class="unbox-device-image img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
             <h4>{{ product.modelObj.friendly }}</h4>
-            <span class="text-muted">SN: {{ product.sn }}</span>
+            <div class="text-muted">SN: {{ product.sn }}</div>
+            <div class="text-muted">Status: {{ product.info.basic.status }}</div>
           </div>
           <div ng-show="products === null">
-            Something's in progress...
+            Looking up your products...
           </div>
-          <button class="btn btn-primary" ng-click="addProduct()"  data-toggle="modal" data-target="#addProductModal">
-            Add Product
-          </button>
+          <button class="btn btn-primary" ng-click="addProduct()">Add Product</button>
         </div>
-          <!-- Modal -->
-          <div class="modal" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="myModalLabel">Add Product</h4>
+
+        <!-- modal for adding a new device -->
+          <script type="text/ng-template" id="addProductModal.html">
+            <div class="modal-header">
+              <h3 class="modal-title">Add Product</h3>
+            </div>
+            <div class="modal-body">
+              <div ng-show="models === null">
+                Loading models...
+              </div>
+              <div ng-hide="models === null">
+                Select a product model to add:
+                <ul>
+                  <li ng-repeat="model in models.models">{{ model.friendly }} <button class="btn" ng-click="selectModel(model)">Add</button></li>
+                </ul>
+              </div>
+              <div id="addSerialNumber" ng-show="selectedModel !== null">
+                <div>
+                  Enter serial number of the {{ selectedModel.friendly }}:
+                  <div>
+                    <input ng-model="serialNumberToAdd"></input>
+                    <span>{{ error }}</span>
+                  </div>
                 </div>
-                <div class="modal-body">
-                    <div id="addProduct" ng-show="addingProduct">
-                      <div ng-show="models === null">
-                        Loading models...
-                      </div>
-                      <div ng-hide="models === null">
-                        Select a product model to add:
-                        <ul>
-                          <li ng-repeat="model in models.models">{{ model.friendly }} <button class="btn" ng-click="selectProductToAdd(model)">Add</button></li>
-                        </ul>
-                      </div>
-                      <div id="addSerialNumber" ng-show="selectedModel !== null">
-                        <div>
-                          Enter serial number of the {{ selectedModel.friendly }}:
-                          <div>
-                            <input ng-model="serialNumberToAdd"></input>
-                            <span>{{ error }}</span>
-                          </div>
-                        </div>
-                        <div>
-                          <div>Example SN: {{ selectedModel.exampleSN }}</div>
-                          <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary" ng-click="addProductBySerialNumber(selectedModel);">Add this product</button>
+                <div>
+                  <div>Example SN: {{ selectedModel.exampleSN }}</div>
+                  <div>SN picture: <img src="{{ selectedModel.pictureSN }}" /></div>
                 </div>
               </div>
             </div>
-          </div>
-      </div>
+            <div class="modal-footer">
+              <button class="btn" ng-click="cancel()">Cancel</button>
+              <button class="btn btn-primary" ng-click="ok()">Add this product</button>
+            </div>
+          </script>
+       </div>
     </div>
     </div>
   </div>
 
   <script src="/bower_components/lodash/lodash.min.js"></script>
-  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script src="/js/app.js"></script>
-
 </body>
 </html>

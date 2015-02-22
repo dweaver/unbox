@@ -54,28 +54,72 @@ app.get('/', function (req, res) {
 
 function handleError(err, res) {
   console.log(err);
-  res.status(err).end();
+  if (typeof err === 'number') {
+    res.status(err).end();
+  } else {
+    var status = typeof err.status === 'number' ? err.status : 500;
+    res.status(status);
+    res.write(err.message);
+    res.end();
+  }
   return;
 }
 
 app.use('/api/products', jwtCheck);
 app.get('/api/products', function(req, res) {
+  var latest = req.query.latest === 'true';
+  var options = {
+    latest: latest
+  };
+
   db.getDevices(req.user.sub, function(err, devices) {
     if (err) {
       handleError(err, res);
     }
     var deviceRIDs = _.map(devices, function(device) {
-      //return {rid: device.DeviceRID, model: 'TODO: Model', sn: 'TODO: sn'};
       return device.devicerid;
     });
+    if (deviceRIDs.length === 0) {
+      return res.send(JSON.stringify({products: []})).end();
+    }
     portals.devicesGet(host, admin, deviceRIDs, function(err, devices) {
+      if (err) {
+        return handleError(err, res);
+      }
       // This excludes devices that are in the Unbox app
       // database but Portals can't find them (e.g. because
       // they're deleted)
       var existentDevices = _.filter(devices, function(device) {
         return device.info !== false;
       });
-      res.send(JSON.stringify({products: existentDevices})).end();
+
+      if (options.latest) {
+        // get latest datasource data for each device
+        var dataSourceRIDs = [];
+        _.each(existentDevices, function (device) {
+          _.each(device.dataSources, function (dataSourceRID) {
+            dataSourceRIDs.push(dataSourceRID);
+          });
+        });
+        portals.dataSourcesGet(host, admin, dataSourceRIDs, function (err, dataSources) {
+          if (err) {
+            return handleError(err, res);
+          }
+          // inject data source responses into
+          var resultIdx = 0;
+          _.each(existentDevices, function (device) {
+            device.dataSourceObj = {};
+            _.each(device.dataSources, function (dataSourceRID) {
+              device.dataSourceObj[dataSourceRID] = dataSources[resultIdx];
+              resultIdx++;
+            });
+          });
+          res.send(JSON.stringify({products: existentDevices})).end();
+        });
+      } else {
+        // just send back the devices, without datasource data
+        res.send(JSON.stringify({products: existentDevices})).end();
+      }
     });
   });
 });
