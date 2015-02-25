@@ -52,6 +52,21 @@ exports.getDevices = function(userId, callback) {
 };
 
 /**
+ * Get all devices.
+ * @param callback - called with err, records
+ */
+exports.getAllDevices = function(callback) {
+  client.query('SELECT * FROM Device;',
+      [],
+      function(err, result) {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, result.rows);
+  });
+};
+
+/**
  * Add a device for a user
  * @param userId - id of user
  * @param deviceObj - device properties

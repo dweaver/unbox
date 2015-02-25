@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   // app.js
-  angular.module('unboxApp', ['auth0', 'angular-storage', 'angular-jwt', 'ui.bootstrap'])
+  angular.module('unboxApp', ['auth0', 'angular-storage', 'angular-jwt', 'ui.bootstrap', 'ngRoute', 'yaru22.angular-timeago'])
   .config(function(authProvider, $httpProvider, jwtInterceptorProvider) {
     // We're annotating this function so that the `store` is injected correctly when this file is minified
     jwtInterceptorProvider.tokenGetter = ['store', function(store) {
@@ -17,8 +17,28 @@
     // This hooks all auth events to check everything as soon as the app starts
     auth.hookEvents();
   })
+  .config(function ($routeProvider) {
+    $routeProvider.when('/', {
+      templateUrl: 'unboxHome.html',
+      controller: 'unboxHomeController'
+    }).when('/admin', {
+      templateUrl: 'unboxAdmin.html',
+      controller: 'unboxAdminController'
+    });
+  })
   .factory('UnboxService', function($q, $http) {
     return {
+      getAllProducts: function() {
+        var deferred = $q.defer();
+        $http.get('/api/admin/products')
+            .then(function(response) {
+              deferred.resolve(response);
+            }, function errorCallback(err) {
+              deferred.reject(err);
+            });
+
+        return deferred.promise;
+      },
       /**
        * Get models for this subdomain and this user's products.
        * @returns {promise}
@@ -91,7 +111,30 @@
     };
     $scope.auth = auth;
   })
-  .controller('unboxAppUserController', function(UnboxService, $scope, $q, auth, $modal, $log) {
+  .controller('MenuController', function($scope, $location) {
+    $scope.getClass = function(path) {
+      // base URL is a special case
+      if (path === '/') {
+        return $location.path() === '/' ? 'active' : '';
+      }
+      if ($location.path().substr(0, path.length) == path) {
+        return 'active';
+      } else {
+        return '';
+      }
+    }
+  })
+  .controller('unboxAdminController', function(UnboxService, $scope, $q, auth, $modal, $log) {
+    $scope.allProducts = null;
+    UnboxService.getAllProducts()
+        .then(function(data) {
+          $scope.allProducts = {products: data.data.products};
+        },
+        function(err) {
+          $scope.errorMessage = err;
+        });
+  })
+  .controller('unboxHomeController', function(UnboxService, $scope, $q, auth, $modal, $log) {
     $scope.auth = auth;
     $scope.errorMessage = '';
     $scope.models = null;

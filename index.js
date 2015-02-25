@@ -146,6 +146,35 @@ app.get('/api/models', function(req, res) {
   });
 });
 
+app.use('/api/admin/products', jwtCheck);
+app.get('/api/admin/products', function(req, res) {
+
+  db.getAllDevices(function(err, devices) {
+    if (err) {
+      handleError(err, res);
+    }
+    var deviceRIDs = _.map(devices, function(device) {
+      return device.devicerid;
+    });
+    if (deviceRIDs.length === 0) {
+      return res.send(JSON.stringify({products: []})).end();
+    }
+    portals.devicesGet(host, admin, deviceRIDs, function(err, portalsDevices) {
+      if (err) {
+        return handleError(err, res);
+      }
+
+      var devicesWithUser = _.map(portalsDevices, function(device, i) {
+        return {portals: device, unbox: devices[i]};
+      })
+      // just send back the devices, without datasource data
+      res.send(JSON.stringify({products: devicesWithUser})).end();
+    });
+  });
+});
+
+
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });

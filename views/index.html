@@ -8,6 +8,8 @@
   <!-- We use client cookies to save the user credentials -->
   <script src="//code.angularjs.org/1.2.16/angular.min.js"></script>
   <script src="//code.angularjs.org/1.2.16/angular-cookies.min.js"></script>
+  <script src="//code.angularjs.org/1.2.16/angular-route.min.js"></script>
+  <script src="/bower_components/angular-timeago/src/timeAgo.js"></script>
 
   <!-- Auth0 Lock script and AngularJS module -->
   <script src="//cdn.auth0.com/js/lock-7.0.min.js"></script>
@@ -57,31 +59,62 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <!-- <div class="col-sm-3 col-md-2 sidebar">
-        <ul class="nav nav-sidebar">
-          <li class="active"><a href="/">Home</a></li>
-          <li><a href="#admin">Admin</a></li>
-        </ul>
-      </div> -->
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-3 col-md-2 sidebar" ng-controller="MenuController">
+          <ul class="nav nav-sidebar">
+            <li ng-class="getClass('/')"><a href="/">Home</a></li>
+            <li ng-class="getClass('/admin')"><a href="#admin">Admin</a></li>
+          </ul>
+        </div>
+      <ng-view>
+      </ng-view>
 
-      <div ng-controller="unboxAppUserController" ng-show="auth.isAuthenticated">
-        <div class="alert alert-danger" role="alert" ng-show="errorMessage.length > 0">
-          {{ errorMessage }}
-        </div>
-        <h2 class="page-header">Home</h2>
-        <div class="row placeholders">
-          <div ng-show="products !== null" class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
-            <img data-src="js/holder.js/150x150/auto/vine" class="unbox-device-image img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
-            <h4>{{ product.modelObj.friendly }}</h4>
-            <div class="text-muted">SN: {{ product.sn }}</div>
-            <div class="text-muted">Status: {{ product.info.basic.status }}</div>
+      <script type="text/ng-template" id="unboxAdmin.html">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <div class="alert alert-danger" role="alert" ng-show="errorMessage.length > 0">
+            {{ errorMessage }}
           </div>
-          <div ng-show="products === null">
-            Looking up your products...
+          <h2 class="page-header">Admin</h2>
+          <div ng-show="allProducts === null">
+            Looking up products...
           </div>
-          <button class="btn btn-primary" ng-click="addProduct()">Add Product</button>
+          <table class="table" ng-show="allProducts !== null">
+            <thead><tr>
+              <th>Owner</th>
+              <th>S/N</th>
+              <th>Status</th>
+              <th>Created At</th>
+            </tr></thead>
+            <tbody><tr ng-repeat="product in allProducts.products">
+              <td>{{ product.unbox.userid }}</td>
+              <td>{{ product.portals.sn }}</td>
+              <td>{{ product.portals.info.basic.status }}</td>
+              <td>{{product.unbox.createdat|timeAgo}}</td>
+            </tr></tbody>
+          </table>
         </div>
+      </script>
+      <script type="text/ng-template" id="unboxHome.html">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <div ng-show="auth.isAuthenticated">
+            <div class="alert alert-danger" role="alert" ng-show="errorMessage.length > 0">
+              {{ errorMessage }}
+            </div>
+            <h2 class="page-header">Home</h2>
+            <div class="row placeholders">
+              <div ng-show="products !== null" class="col-xs-6 col-sm-3 placeholder" ng-repeat="product in products.products">
+                <img data-src="js/holder.js/150x150/auto/vine" class="unbox-device-image img-responsive img-circle" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzM5REJBQyIvPjxnPjx0ZXh0IHg9Ijc0LjA0Njg3NSIgeT0iMTAwIiBzdHlsZT0iZmlsbDojMUUyOTJDO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+MjAweDIwMDwvdGV4dD48L2c+PC9zdmc+" data-holder-rendered="true">
+                <h4>{{ product.modelObj.friendly }}</h4>
+                <div class="text-muted">SN: {{ product.sn }}</div>
+                <div class="text-muted">Status: {{ product.info.basic.status }}</div>
+              </div>
+              <div ng-show="products === null">
+                Looking up your products...
+              </div>
+              <button class="btn btn-primary" ng-click="addProduct()">Add Product</button>
+            </div>
+          </div>
+        </div>
+      </script>
 
         <!-- modal for adding a new device -->
           <script type="text/ng-template" id="addProductModal.html">
@@ -117,10 +150,7 @@
               <button class="btn btn-primary" ng-click="ok()">Add this product</button>
             </div>
           </script>
-       </div>
     </div>
-    </div>
-
   </div>
   <script src="/bower_components/lodash/lodash.min.js"></script>
   <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
