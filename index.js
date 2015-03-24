@@ -72,6 +72,8 @@ app.get('/api/products', function(req, res) {
     latest: latest
   };
 
+  console.log(req.user);
+
   db.getDevices(req.user.sub, function(err, devices) {
     if (err) {
       handleError(err, res);
@@ -125,10 +127,11 @@ app.get('/api/products', function(req, res) {
 });
 
 app.post('/api/products', function(req, res) {
-  var device = req.body;
+  var device = req.body.product;
+  var email = req.body.email;
   portals.deviceCreate(host, admin, portalId, device, function(err, createdDevice) {
     if (err) { return handleError(err, res); }
-    db.putDevice(req.user.sub, createdDevice, function(err) {
+    db.putDevice(req.user.sub, email, createdDevice, function(err) {
       if (err) { return handleError(err, res); }
       res.send(JSON.stringify(createdDevice))
     });

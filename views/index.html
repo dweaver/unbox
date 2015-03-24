@@ -59,7 +59,7 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar" ng-controller="MenuController">
+        <div class="col-sm-3 col-md-2 sidebar" ng-show="auth.isAuthenticated" ng-controller="MenuController">
           <ul class="nav nav-sidebar">
             <li ng-class="getClass('/')"><a href="/">Home</a></li>
             <li ng-class="getClass('/admin')"><a href="#admin">Admin</a></li>
@@ -79,20 +79,21 @@
           </div>
           <table class="table" ng-show="allProducts !== null">
             <thead><tr>
-              <th>Owner</th>
               <th>S/N</th>
               <th>Status</th>
-              <th>Created At</th>
+              <th>Created</th>
+              <th>Owner</th>
             </tr></thead>
             <tbody><tr ng-repeat="product in allProducts.products">
-              <td>{{ product.unbox.userid }}</td>
               <td>{{ product.portals.sn }}</td>
               <td>{{ product.portals.info.basic.status }}</td>
               <td>{{product.unbox.createdat|timeAgo}}</td>
+              <td>{{ product.unbox.email }}</td>
             </tr></tbody>
           </table>
         </div>
       </script>
+
       <script type="text/ng-template" id="unboxHome.html">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <div ng-show="auth.isAuthenticated">

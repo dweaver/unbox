@@ -70,7 +70,7 @@
 
         return deferred.promise;
       },
-      addProduct: function(product) {
+      addProduct: function(product, profile) {
         var deferred = $q.defer();
         var req = {
           method: 'POST',
@@ -78,7 +78,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          data: product
+          data: {product: product, email: profile.email}
         };
         $http(req)
           .success(function(data, status, headers, config) {
@@ -93,7 +93,7 @@
   })
   .controller('unboxAppLoginController', function(auth, store, $location, $scope) {
     $scope.login = function() {
-      auth.signin({}, function(profile, token) {
+      auth.signin({authParams: { scope: 'openid email'}}, function(profile, token) {
         // Success callback
         store.set('profile', profile);
         store.set('token', token);
@@ -111,7 +111,8 @@
     };
     $scope.auth = auth;
   })
-  .controller('MenuController', function($scope, $location) {
+  .controller('MenuController', function(auth, $scope, $location) {
+    $scope.auth = auth;
     $scope.getClass = function(path) {
       // base URL is a special case
       if (path === '/') {
@@ -134,7 +135,7 @@
           $scope.errorMessage = err;
         });
   })
-  .controller('unboxHomeController', function(UnboxService, $scope, $q, auth, $modal, $log) {
+  .controller('unboxHomeController', function(UnboxService, $scope, $q, store, auth, $modal, $log) {
     $scope.auth = auth;
     $scope.errorMessage = '';
     $scope.models = null;
@@ -147,7 +148,11 @@
             $scope.products = {products: data.products};
           },
           function(err) {
-            $scope.errorMessage = err;
+            if (err.indexOf('jwt expired') > -1) {
+
+            } else {
+              $scope.errorMessage = err;
+            }
           });
     };
     $scope.syncProducts();
@@ -174,7 +179,8 @@
           model: result.selectedModel.name,
           type: 'vendor'
         };
-        UnboxService.addProduct(product)
+        var profile = store.get('profile');
+        UnboxService.addProduct(product, profile)
             .then(function() {
               $scope.syncProducts();
             },

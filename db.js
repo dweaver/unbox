@@ -26,7 +26,7 @@ exports.connect = function(callback) {
 exports.setup = function(callback) {
   // create the table
   client.query('CREATE TABLE IF NOT EXISTS Device ' +
-    '(UserID VARCHAR(255), DeviceRID VARCHAR(40), CreatedAt timestamp);', function (err) {
+    '(UserID VARCHAR(255), Email VARCHAR(255), DeviceRID VARCHAR(40), CreatedAt timestamp);', function (err) {
     if (err) {
       console.log('Error creating tables: ', err);
       return callback(err);
@@ -72,16 +72,16 @@ exports.getAllDevices = function(callback) {
  * @param deviceObj - device properties
  * @param callback - called with err, records
  */
-exports.putDevice = function(userId, deviceObj, callback) {
-    // create the table
-    console.log('INSERT ', userId, deviceObj.rid);
-    client.query(
-      'INSERT INTO Device (UserID, DeviceRID, CreatedAt) VALUES ($1, $2, now());',
-      [userId, deviceObj.rid],
-      function(err, results) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null);
-    });
+exports.putDevice = function(userId, email, deviceObj, callback) {
+  // create the table
+  console.log('INSERT ', userId, deviceObj.rid);
+  client.query(
+    'INSERT INTO Device (UserID, Email, DeviceRID, CreatedAt) VALUES ($1, $2, $3, now());',
+    [userId, email, deviceObj.rid],
+    function(err, results) {
+      if (err) {
+        return callback(err);
+      }
+      callback(null);
+  });
 };
