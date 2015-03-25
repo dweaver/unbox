@@ -148,7 +148,7 @@
                 </div>
                 <div>
                   <div>Example serial number: {{ selectedModel.exampleSN }}</div>
-                  <div>How to find it: <img src="{{ selectedModel.pictureSN }}" /></div>
+                  <div ng-show="selectedModel.pictureSN.length > 0">How to find it: <img src="{{ selectedModel.pictureSN }}" /></div>
                 </div>
               </div>
             </div>

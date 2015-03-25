@@ -60,11 +60,11 @@
               return model.name === product.model;
             })
           });
-          console.log('products--', products);
+            console.log('products:', products);
           deferred.resolve({products: products, models: models});
         }, function errorCallback(err) {
           console.log(err);
-          var msg = 'Error loading models and products. ' + err.status + ' ' + err.data;
+          var msg = 'Error loading models and products. ' + err.status;
           deferred.reject(msg)
         });
 
