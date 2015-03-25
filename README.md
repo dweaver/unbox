@@ -24,7 +24,7 @@ Or, press this button to do all this automatically:
 
 ## Authorization
 
-Unbox requires an admin username and password in order to get the client models for a domain with the Portals API. Here's how to make an admin account that may be used with Unbox. You may use any Portals domain admin account, but we recommend creating a separate user account for Unbox so that you can track what actions Unbox took. Here's how to do that.
+Unbox requires an admin username and password in order to get the client models for a domain with the Portals API. You may use any Portals domain admin account, but we recommend creating a separate user account for Unbox so that you can track what actions Unbox took. Here's how to make an admin account that may be used with Unbox.
 
 First, log in as an admin and create a new user for Unbox here: https://YOUR_DOMAIN.exosite.com/admin/userlist
 
